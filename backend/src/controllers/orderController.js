@@ -1,9 +1,108 @@
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
 import Cart from "../models/Cart.js";
-
+import midtransClient from "midtrans-client";
 // @desc    Create order
 // @route   POST /api/orders
+export const getPaymentToken = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id)
+      .populate("items.product")
+      .populate("user", "name email");
+
+    if (!order) {
+      return res.status(404).json({ message: "Pesanan tidak ditemukan" });
+    }
+
+    if (order.user._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Tidak memiliki akses" });
+    }
+
+    const snap = new midtransClient.Snap({
+      isProduction: false,
+      serverKey: process.env.MIDTRANS_SERVER_KEY,
+    });
+
+    const parameter = {
+      transaction_details: {
+        order_id: order._id.toString(),
+        gross_amount: order.totalAmount,
+      },
+      customer_details: {
+        first_name: order.shippingAddress.recipientName,
+        phone: order.shippingAddress.phone,
+        email: order.user.email,
+        shipping_address: {
+          first_name: order.shippingAddress.recipientName,
+          phone: order.shippingAddress.phone,
+          address: order.shippingAddress.address,
+          city: order.shippingAddress.city,
+          postal_code: order.shippingAddress.postalCode,
+          country_code: "IDN",
+        },
+      },
+      item_details: order.items.map((item) => ({
+        id: item.product._id.toString(),
+        price: item.price,
+        quantity: item.quantity,
+        name: item.product.name,
+      })),
+    };
+
+    const transaction = await snap.createTransaction(parameter);
+
+    // Simpan token ke order
+    order.paymentToken = transaction.token;
+    await order.save();
+
+    res.json({
+      token: transaction.token,
+      redirect_url: transaction.redirect_url,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Handle Midtrans webhook notification
+// @route   POST /api/orders/notification
+export const handlePaymentNotification = async (req, res) => {
+  try {
+    const snap = new midtransClient.Snap({
+      isProduction: false,
+      serverKey: process.env.MIDTRANS_SERVER_KEY,
+    });
+
+    const notification = await snap.transaction.notification(req.body);
+    const { order_id, transaction_status, fraud_status } = notification;
+
+    const order = await Order.findById(order_id);
+    if (!order) {
+      return res.status(404).json({ message: "Order tidak ditemukan" });
+    }
+
+    // Update status berdasarkan notifikasi Midtrans
+    if (transaction_status === "capture" && fraud_status === "accept") {
+      order.status = "paid";
+    } else if (transaction_status === "settlement") {
+      order.status = "paid";
+    } else if (
+      transaction_status === "cancel" ||
+      transaction_status === "deny" ||
+      transaction_status === "expire"
+    ) {
+      order.status = "cancelled";
+    } else if (transaction_status === "pending") {
+      order.status = "pending";
+    }
+
+    await order.save();
+    res.status(200).json({ message: "OK" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const createOrder = async (req, res) => {
   try {
     const { items, shippingAddress, notes } = req.body;
