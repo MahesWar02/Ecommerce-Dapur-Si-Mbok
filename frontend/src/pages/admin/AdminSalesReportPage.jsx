@@ -41,7 +41,6 @@ const AdminSalesReportPage = () => {
       year: "numeric",
     });
 
-  // SD #15: Meminta data laporan penjualan → Ambil data laporan
   const loadReport = useCallback(async () => {
     try {
       setLoading(true);
@@ -58,7 +57,6 @@ const AdminSalesReportPage = () => {
     loadReport();
   }, [loadReport]);
 
-  // SD #15: [Unduh laporan] → Generate PDF → Laporan siap diunduh
   const handleDownloadPDF = () => {
     if (!data) return;
 
@@ -66,7 +64,7 @@ const AdminSalesReportPage = () => {
     const pageW = doc.internal.pageSize.getWidth();
 
     // Header
-    doc.setFillColor(249, 115, 22); // orange-500
+    doc.setFillColor(249, 115, 22);
     doc.rect(0, 0, pageW, 30, "F");
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(16);
@@ -90,8 +88,16 @@ const AdminSalesReportPage = () => {
 
     autoTable(doc, {
       startY: 46,
-      head: [["Total Pesanan", "Total Pendapatan"]],
-      body: [[data.totalOrders, formatRupiah(data.totalRevenue)]],
+      head: [["Total Pesanan", "Total Pendapatan", "Rata-rata per Pesanan"]],
+      body: [
+        [
+          data.totalOrders,
+          formatRupiah(data.totalRevenue),
+          data.totalOrders > 0
+            ? formatRupiah(data.totalRevenue / data.totalOrders)
+            : "Rp0",
+        ],
+      ],
       styles: { fontSize: 10 },
       headStyles: { fillColor: [249, 115, 22] },
       margin: { left: 14, right: 14 },
@@ -123,11 +129,12 @@ const AdminSalesReportPage = () => {
 
     autoTable(doc, {
       startY: doc.lastAutoTable.finalY + 16,
-      head: [["ID", "Pembeli", "Tanggal", "Status", "Total"]],
+      head: [["ID", "Pembeli", "Tanggal", "Asal", "Status", "Total"]],
       body: data.orders.map((o) => [
         `#${o._id.slice(-8).toUpperCase()}`,
-        o.user?.name || "-",
+        o.isOffline ? o.customerName || "-" : o.user?.name || "-",
         formatDate(o.createdAt),
+        o.isOffline ? "Offline" : "Online",
         statusConfig[o.status]?.label || o.status,
         formatRupiah(o.totalAmount),
       ]),
@@ -167,7 +174,6 @@ const AdminSalesReportPage = () => {
               Data pesanan yang sudah dibayar hingga selesai
             </p>
           </div>
-          {/* SD #15: [Unduh laporan] */}
           <button
             onClick={handleDownloadPDF}
             disabled={!data || loading}
@@ -177,7 +183,7 @@ const AdminSalesReportPage = () => {
           </button>
         </div>
 
-        {/* Filter Tanggal — SD #15: [Filter tanggal] */}
+        {/* Filter Tanggal */}
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 mb-5 flex flex-wrap gap-3 items-center">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <span>Dari</span>
@@ -197,7 +203,6 @@ const AdminSalesReportPage = () => {
               className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
             />
           </div>
-          {/* Shortcut filter */}
           <div className="flex gap-2 ml-auto">
             {[
               {
@@ -246,6 +251,14 @@ const AdminSalesReportPage = () => {
                 <p className="text-3xl font-bold text-gray-800">
                   {data.totalOrders}
                 </p>
+                <div className="flex gap-3 mt-2">
+                  <span className="text-xs text-blue-500">
+                    🌐 Online: {data.orders.filter((o) => !o.isOffline).length}
+                  </span>
+                  <span className="text-xs text-orange-500">
+                    🧾 Offline: {data.orders.filter((o) => o.isOffline).length}
+                  </span>
+                </div>
               </div>
               <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
                 <p className="text-xs text-gray-400 mb-1">Total Pendapatan</p>
@@ -304,7 +317,7 @@ const AdminSalesReportPage = () => {
               </div>
             )}
 
-            {/* Tabel Pesanan — SD #15: [Lihat detail pesanan] */}
+            {/* Tabel Pesanan */}
             <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100">
                 <h2 className="font-semibold text-gray-800">
@@ -329,6 +342,7 @@ const AdminSalesReportPage = () => {
                         <th className="px-5 py-3 text-left">Pembeli</th>
                         <th className="px-5 py-3 text-left">Produk</th>
                         <th className="px-5 py-3 text-left">Tanggal</th>
+                        <th className="px-5 py-3 text-left">Asal</th>
                         <th className="px-5 py-3 text-left">Status</th>
                         <th className="px-5 py-3 text-right">Total</th>
                       </tr>
@@ -344,11 +358,15 @@ const AdminSalesReportPage = () => {
                           </td>
                           <td className="px-5 py-3">
                             <p className="font-medium text-gray-800">
-                              {o.user?.name || "-"}
+                              {o.isOffline
+                                ? o.customerName || "-"
+                                : o.user?.name || "-"}
                             </p>
-                            <p className="text-xs text-gray-400">
-                              {o.user?.email}
-                            </p>
+                            {!o.isOffline && (
+                              <p className="text-xs text-gray-400">
+                                {o.user?.email}
+                              </p>
+                            )}
                           </td>
                           <td className="px-5 py-3 text-gray-600 text-xs">
                             {o.items
@@ -357,6 +375,17 @@ const AdminSalesReportPage = () => {
                           </td>
                           <td className="px-5 py-3 text-gray-500 text-xs">
                             {formatDate(o.createdAt)}
+                          </td>
+                          <td className="px-5 py-3">
+                            <span
+                              className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${
+                                o.isOffline
+                                  ? "bg-orange-100 text-orange-600"
+                                  : "bg-blue-100 text-blue-600"
+                              }`}
+                            >
+                              {o.isOffline ? "🧾 Offline" : "🌐 Online"}
+                            </span>
                           </td>
                           <td className="px-5 py-3">
                             <span
@@ -374,11 +403,10 @@ const AdminSalesReportPage = () => {
                         </tr>
                       ))}
                     </tbody>
-                    {/* Total row */}
                     <tfoot>
                       <tr className="bg-orange-50 border-t border-orange-100">
                         <td
-                          colSpan={5}
+                          colSpan={6}
                           className="px-5 py-3 text-sm font-semibold text-gray-700"
                         >
                           Total Pendapatan

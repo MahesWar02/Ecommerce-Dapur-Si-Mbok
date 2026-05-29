@@ -415,3 +415,74 @@ export const getSalesReport = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const createOfflineOrder = async (req, res) => {
+  try {
+    const { customerName, items, notes, transactionDate } = req.body;
+
+    if (!customerName || !customerName.trim()) {
+      return res.status(400).json({ message: "Nama pelanggan wajib diisi" });
+    }
+    if (!items || items.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Minimal satu produk harus dipilih" });
+    }
+
+    let totalAmount = 0;
+    const orderItems = [];
+
+    for (const item of items) {
+      if (!item.product || item.quantity < 1) {
+        return res.status(400).json({ message: "Data produk tidak valid" });
+      }
+      const product = await Product.findById(item.product);
+      if (!product) {
+        return res.status(404).json({ message: "Produk tidak ditemukan" });
+      }
+      if (product.stock < item.quantity) {
+        return res.status(400).json({
+          message: `Stok ${product.name} tidak cukup (tersisa ${product.stock})`,
+        });
+      }
+      orderItems.push({
+        product: product._id,
+        quantity: item.quantity,
+        price: product.price,
+      });
+      totalAmount += product.price * item.quantity;
+      product.stock -= item.quantity;
+      await product.save();
+    }
+
+    // Gunakan tanggal dari input, fallback ke sekarang
+    const createdAt = transactionDate ? new Date(transactionDate) : new Date();
+
+    const order = new Order({
+      user: req.user._id,
+      items: orderItems,
+      shippingAddress: {
+        recipientName: customerName,
+        phone: "-",
+        address: "Transaksi Offline",
+        city: "-",
+        postalCode: "-",
+      },
+      totalAmount,
+      notes: notes || "",
+      status: "delivered",
+      isOffline: true,
+      customerName: customerName.trim(),
+    });
+
+    // Override timestamps dengan tanggal transaksi yang dipilih
+    order.createdAt = createdAt;
+    order.updatedAt = createdAt;
+    await order.save();
+
+    await order.populate("items.product", "name price image");
+    res.status(201).json(order);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

@@ -6,6 +6,7 @@ const menuItems = [
   { path: "/admin/orders", icon: "📦", label: "Kelola Pesanan" },
   { path: "/admin/products", icon: "🍽️", label: "Kelola Produk" },
   { path: "/admin/sales-report", icon: "📊", label: "Laporan Penjualan" },
+  { path: "/admin/offline-order", icon: "🧾", label: "Transaksi Offline" },
 ];
 
 const AdminLayout = ({ children }) => {

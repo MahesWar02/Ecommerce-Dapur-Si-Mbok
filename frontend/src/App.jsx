@@ -19,6 +19,7 @@ import AdminOrderDetailPage from "./pages/admin/AdminOrderDetailPage";
 import AdminProductsPage from "./pages/admin/AdminProductsPage";
 import ReviewPage from "./pages/buyer/ReviewPage";
 import AdminSalesReportPage from "./pages/admin/AdminSalesReportPage";
+import AdminOfflineOrderPage from "./pages/admin/AdminOfflineOrderPage";
 
 function App() {
   return (
@@ -67,6 +68,14 @@ function App() {
         element={
           <AdminRoute>
             <AdminSalesReportPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/offline-order"
+        element={
+          <AdminRoute>
+            <AdminOfflineOrderPage />
           </AdminRoute>
         }
       />

@@ -11,24 +11,23 @@ import {
   markOrderPaid,
   cancelOrder,
   getSalesReport,
+  createOfflineOrder,
 } from "../controllers/orderController.js";
-
 import { protect, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Midtrans notification
 router.post("/notification", handlePaymentNotification);
 
-// Order routes
 router.post("/", protect, createOrder);
-router.get("/my", protect, getMyOrders);
-router.get(
-  "/report",
+router.post(
+  "/offline",
   protect,
-  authorize("admin", "penjual", "superadmin"),
-  getSalesReport,
+  authorize("admin", "penjual"),
+  createOfflineOrder,
 );
+router.get("/my", protect, getMyOrders);
+router.get("/report", protect, authorize("admin", "penjual"), getSalesReport);
 router.get("/", protect, authorize("admin", "penjual"), getAllOrders);
 router.get("/:id", protect, getOrderById);
 
@@ -41,7 +40,6 @@ router.put(
 );
 router.put("/:id/confirm-received", protect, confirmOrderReceived);
 router.put("/:id/mark-paid", protect, markOrderPaid);
-
 router.post("/:id/payment", protect, getPaymentToken);
 
 export default router;

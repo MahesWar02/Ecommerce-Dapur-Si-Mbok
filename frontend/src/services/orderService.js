@@ -22,3 +22,5 @@ export const updateOrderStatus = (id, status) =>
 export const cancelOrder = (id) => api.put(`/orders/${id}/cancel`);
 
 export const getSalesReport = (params) => api.get("/orders/report", { params });
+
+export const createOfflineOrder = (data) => api.post("/orders/offline", data);
