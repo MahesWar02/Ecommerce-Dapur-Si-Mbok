@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { fetchProductById } from "../../store/slices/productSlice";
 import { addItemToCart } from "../../store/slices/cartSlice";
 import Navbar from "../../components/shared/Navbar";
+import * as reviewService from "../../services/reviewService";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -15,10 +16,29 @@ const ProductDetailPage = () => {
   );
   const { isAuthenticated } = useSelector((state) => state.auth);
   const [qty, setQty] = useState(1);
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
 
   useEffect(() => {
     dispatch(fetchProductById(id));
   }, [id]);
+
+  const loadReviews = useCallback(async () => {
+    if (!id) return;
+    setReviewsLoading(true);
+    try {
+      const res = await reviewService.getReviewsByProduct(id);
+      setReviews(res.data);
+    } catch {
+      // silent
+    } finally {
+      setReviewsLoading(false);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    loadReviews();
+  }, [loadReviews]);
 
   const formatRupiah = (amount) => {
     return new Intl.NumberFormat("id-ID", {
@@ -34,10 +54,7 @@ const ProductDetailPage = () => {
       return;
     }
     const result = await dispatch(
-      addItemToCart({
-        productId: product._id,
-        quantity: qty,
-      }),
+      addItemToCart({ productId: product._id, quantity: qty }),
     );
     if (addItemToCart.fulfilled.match(result)) {
       toast.success(`${product.name} ditambahkan ke keranjang`);
@@ -52,10 +69,7 @@ const ProductDetailPage = () => {
       return;
     }
     const result = await dispatch(
-      addItemToCart({
-        productId: product._id,
-        quantity: qty,
-      }),
+      addItemToCart({ productId: product._id, quantity: qty }),
     );
     if (addItemToCart.fulfilled.match(result)) {
       navigate("/cart");
@@ -114,6 +128,29 @@ const ProductDetailPage = () => {
                 {product.name}
               </h1>
             </div>
+
+            {/* Rating ringkas */}
+            {product.reviewCount > 0 && (
+              <div className="flex items-center gap-2">
+                <div className="flex">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <span
+                      key={s}
+                      className={`text-base ${
+                        s <= Math.round(product.avgRating || 0)
+                          ? "text-yellow-400"
+                          : "text-gray-300"
+                      }`}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+                <span className="text-sm text-gray-500">
+                  {product.avgRating?.toFixed(1)} ({product.reviewCount} ulasan)
+                </span>
+              </div>
+            )}
 
             {/* Harga */}
             <div className="text-3xl font-bold text-orange-600">
@@ -181,6 +218,131 @@ const ProductDetailPage = () => {
               </button>
             </div>
           </div>
+        </div>
+
+        {/* ── Section Ulasan ─────────────────────────────────── */}
+        <div className="mt-10">
+          <h2 className="text-lg font-bold text-gray-800 mb-4">
+            ⭐ Ulasan Pembeli
+            {reviews.length > 0 && (
+              <span className="ml-2 text-sm font-normal text-gray-400">
+                ({reviews.length} ulasan)
+              </span>
+            )}
+          </h2>
+
+          {/* Ringkasan rating */}
+          {reviews.length > 0 && (
+            <div className="bg-orange-50 rounded-xl p-4 mb-5 flex items-center gap-5">
+              <div className="text-center">
+                <p className="text-4xl font-bold text-orange-600">
+                  {product.avgRating?.toFixed(1) || "0.0"}
+                </p>
+                <div className="flex justify-center mt-1">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <span
+                      key={s}
+                      className={`text-lg ${
+                        s <= Math.round(product.avgRating || 0)
+                          ? "text-yellow-400"
+                          : "text-gray-300"
+                      }`}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {reviews.length} ulasan
+                </p>
+              </div>
+              <div className="flex-1 space-y-1.5">
+                {[5, 4, 3, 2, 1].map((star) => {
+                  const count = reviews.filter((r) => r.rating === star).length;
+                  const pct = reviews.length
+                    ? (count / reviews.length) * 100
+                    : 0;
+                  return (
+                    <div
+                      key={star}
+                      className="flex items-center gap-2 text-xs text-gray-500"
+                    >
+                      <span>{star}★</span>
+                      <div className="flex-1 bg-gray-200 rounded-full h-1.5">
+                        <div
+                          className="bg-yellow-400 h-1.5 rounded-full"
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                      <span className="w-4 text-right">{count}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {reviewsLoading ? (
+            <div className="flex justify-center py-8">
+              <div className="w-8 h-8 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin" />
+            </div>
+          ) : reviews.length === 0 ? (
+            <div className="text-center py-10 text-gray-400">
+              <p className="text-3xl mb-2">💬</p>
+              <p className="text-sm">Belum ada ulasan untuk produk ini</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {reviews.map((review) => (
+                <div
+                  key={review._id}
+                  className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm"
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-sm font-bold text-orange-600">
+                        {review.user?.name?.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-800">
+                          {review.user?.name}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {new Date(review.createdAt).toLocaleDateString(
+                            "id-ID",
+                            {
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                            },
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <span
+                          key={s}
+                          className={`text-sm ${
+                            s <= review.rating
+                              ? "text-yellow-400"
+                              : "text-gray-300"
+                          }`}
+                        >
+                          ★
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  {review.comment && (
+                    <p className="text-sm text-gray-600 mt-2 leading-relaxed">
+                      {review.comment}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
