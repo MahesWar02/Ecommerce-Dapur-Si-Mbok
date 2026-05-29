@@ -11,6 +11,8 @@ import MyOrdersPage from "./pages/buyer/MyOrdersPage";
 import OrderDetailPage from "./pages/buyer/OrderDetailPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ProfilePage from "./pages/buyer/ProfilePage";
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
       <Route path="/orders" element={<MyOrdersPage />} />
       <Route path="/orders/:id" element={<OrderDetailPage />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

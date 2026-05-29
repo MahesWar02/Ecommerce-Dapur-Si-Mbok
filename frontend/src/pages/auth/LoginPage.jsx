@@ -85,7 +85,7 @@ const LoginPage = () => {
                   Kata Sandi
                 </label>
                 <Link
-                  to="/reset-password"
+                  to="/forgot-password"
                   className="text-xs text-orange-600 hover:underline"
                 >
                   Lupa kata sandi?

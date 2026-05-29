@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
 
 // Generate JWT token
 const generateToken = (id) => {
@@ -131,6 +133,103 @@ export const changePassword = async (req, res) => {
     await user.save();
 
     res.json({ message: "Kata sandi berhasil diubah" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Request reset password — kirim email
+// @route   POST /api/auth/forgot-password
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email wajib diisi" });
+    }
+
+    const user = await User.findOne({ email });
+
+    // Selalu response sukses agar tidak bocorkan info email terdaftar
+    if (!user) {
+      return res.json({
+        message: "Jika email terdaftar, link reset akan dikirim",
+      });
+    }
+
+    // Buat token reset
+    const token = crypto.randomBytes(32).toString("hex");
+    user.resetToken = token;
+    user.resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 jam
+    await user.save({ validateBeforeSave: false });
+
+    // Kirim email
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${token}`;
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"Dapur Si Mbok" <${process.env.EMAIL_USER}>`,
+      to: user.email,
+      subject: "Reset Kata Sandi - Dapur Si Mbok",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 480px; margin: auto;">
+          <h2 style="color: #f97316;">Dapur Si Mbok</h2>
+          <p>Halo <strong>${user.name}</strong>,</p>
+          <p>Kami menerima permintaan reset kata sandi untuk akun Anda.</p>
+          <p>Klik tombol berikut untuk membuat kata sandi baru:</p>
+          <a href="${resetUrl}"
+            style="display:inline-block;background:#f97316;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;margin:16px 0;">
+            Reset Kata Sandi
+          </a>
+          <p style="color:#888;font-size:13px;">Link ini hanya berlaku selama <strong>1 jam</strong>.</p>
+          <p style="color:#888;font-size:13px;">Jika Anda tidak meminta reset kata sandi, abaikan email ini.</p>
+        </div>
+      `,
+    });
+
+    res.json({ message: "Jika email terdaftar, link reset akan dikirim" });
+  } catch (error) {
+    console.error("Forgot password error:", error.message);
+    res.status(500).json({ message: "Gagal mengirim email reset" });
+  }
+};
+
+// @desc    Reset password dengan token dari email
+// @route   POST /api/auth/reset-password/:token
+export const resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ message: "Kata sandi minimal 6 karakter" });
+    }
+
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpiry: { $gt: new Date() }, // belum expired
+    });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "Link tidak valid atau sudah kedaluwarsa" });
+    }
+
+    // Update password & hapus token
+    user.password = newPassword;
+    user.resetToken = null;
+    user.resetTokenExpiry = null;
+    await user.save();
+
+    res.json({ message: "Kata sandi berhasil diubah, silakan login" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
