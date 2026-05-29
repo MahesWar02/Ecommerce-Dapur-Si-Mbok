@@ -357,3 +357,61 @@ export const autoCancelExpiredOrders = async () => {
     console.log(error.message);
   }
 };
+
+// @desc  Laporan penjualan — SD #15
+// @route GET /api/orders/report?startDate=&endDate=
+export const getSalesReport = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    let filter = {
+      status: { $in: ["paid", "processing", "shipped", "delivered"] },
+    };
+
+    if (startDate || endDate) {
+      filter.createdAt = {};
+      if (startDate) filter.createdAt.$gte = new Date(startDate);
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        filter.createdAt.$lte = end;
+      }
+    }
+
+    const orders = await Order.find(filter)
+      .populate("items.product", "name category price")
+      .populate("user", "name email")
+      .sort({ createdAt: -1 });
+
+    // Hitung ringkasan
+    const totalRevenue = orders.reduce((sum, o) => sum + o.totalAmount, 0);
+    const totalOrders = orders.length;
+
+    // Produk terlaris
+    const productMap = {};
+    orders.forEach((o) => {
+      o.items.forEach((item) => {
+        const pid = item.product?._id?.toString();
+        if (!pid) return;
+        if (!productMap[pid]) {
+          productMap[pid] = {
+            name: item.product.name,
+            category: item.product.category,
+            qty: 0,
+            revenue: 0,
+          };
+        }
+        productMap[pid].qty += item.quantity;
+        productMap[pid].revenue += item.price * item.quantity;
+      });
+    });
+
+    const topProducts = Object.values(productMap)
+      .sort((a, b) => b.qty - a.qty)
+      .slice(0, 5);
+
+    res.json({ orders, totalRevenue, totalOrders, topProducts });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

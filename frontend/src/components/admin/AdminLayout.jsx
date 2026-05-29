@@ -5,6 +5,7 @@ import { logoutUser } from "../../store/slices/authSlice";
 const menuItems = [
   { path: "/admin/orders", icon: "📦", label: "Kelola Pesanan" },
   { path: "/admin/products", icon: "🍽️", label: "Kelola Produk" },
+  { path: "/admin/sales-report", icon: "📊", label: "Laporan Penjualan" },
 ];
 
 const AdminLayout = ({ children }) => {
