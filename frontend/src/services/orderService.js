@@ -18,3 +18,5 @@ export const getAllOrders = () => api.get("/orders");
 
 export const updateOrderStatus = (id, status) =>
   api.put(`/orders/${id}/status`, { status });
+
+export const cancelOrder = (id) => api.put(`/orders/${id}/cancel`);

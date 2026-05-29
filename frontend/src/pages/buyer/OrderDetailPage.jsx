@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as orderService from "../../services/orderService";
+import { cancelOrder } from "../../services/orderService";
 import Navbar from "../../components/shared/Navbar";
 
 const statusSteps = ["pending", "paid", "processing", "shipped", "delivered"];
@@ -18,9 +19,11 @@ const statusConfig = {
 const OrderDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [timeLeft, setTimeLeft] = useState("");
 
   const formatRupiah = (amount) =>
     new Intl.NumberFormat("id-ID", {
@@ -50,16 +53,51 @@ const OrderDetailPage = () => {
         setLoading(false);
       }
     };
+
     fetchOrder();
   }, [id]);
 
+  // COUNTDOWN TIMER
+  useEffect(() => {
+    if (!order || order.status !== "pending" || !order.expiredAt) return;
+
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const expiry = new Date(order.expiredAt).getTime();
+      const distance = expiry - now;
+
+      if (distance <= 0) {
+        setTimeLeft("Waktu pembayaran habis");
+        clearInterval(interval);
+        return;
+      }
+
+      const hours = Math.floor(distance / (1000 * 60 * 60));
+
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      setTimeLeft(
+        `${hours.toString().padStart(2, "0")}:${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
+      );
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [order]);
+
   const handleConfirmReceived = async () => {
     setConfirmLoading(true);
+
     try {
       await orderService.confirmOrderReceived(id);
+
       toast.success("Pesanan dikonfirmasi diterima!");
-      // Refresh data
+
       const res = await orderService.getOrderById(id);
+
       setOrder(res.data);
     } catch {
       toast.error("Gagal mengkonfirmasi pesanan");
@@ -68,10 +106,30 @@ const OrderDetailPage = () => {
     }
   };
 
+  // CANCEL ORDER
+  const handleCancelOrder = async () => {
+    const confirmCancel = window.confirm("Yakin ingin membatalkan pesanan?");
+
+    if (!confirmCancel) return;
+
+    try {
+      await cancelOrder(order._id);
+
+      toast.success("Pesanan berhasil dibatalkan");
+
+      const res = await orderService.getOrderById(id);
+
+      setOrder(res.data);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Gagal membatalkan pesanan");
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
+
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500" />
         </div>
@@ -80,11 +138,13 @@ const OrderDetailPage = () => {
   }
 
   const currentStepIndex = statusSteps.indexOf(order.status);
+
   const isCancelled = order.status === "cancelled";
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
+
       <div className="max-w-3xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
@@ -94,20 +154,24 @@ const OrderDetailPage = () => {
           >
             ← Kembali
           </button>
+
           <h1 className="text-xl font-bold text-gray-800">Detail Pesanan</h1>
         </div>
 
-        {/* Order ID & Tanggal */}
+        {/* Order ID */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-4">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-xs text-gray-400 mb-1">ID Pesanan</p>
+
               <p className="font-mono text-sm font-medium text-gray-800">
                 #{order._id.slice(-12).toUpperCase()}
               </p>
             </div>
+
             <div className="text-right">
               <p className="text-xs text-gray-400 mb-1">Tanggal</p>
+
               <p className="text-sm text-gray-600">
                 {formatDate(order.createdAt)}
               </p>
@@ -115,12 +179,12 @@ const OrderDetailPage = () => {
           </div>
         </div>
 
-        {/* Status Tracker */}
+        {/* STATUS */}
         {!isCancelled ? (
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-4">
             <h3 className="font-semibold text-gray-800 mb-5">Status Pesanan</h3>
+
             <div className="relative">
-              {/* Progress line */}
               <div className="absolute top-4 left-4 right-4 h-0.5 bg-gray-200">
                 <div
                   className="h-full bg-orange-400 transition-all duration-500"
@@ -132,11 +196,15 @@ const OrderDetailPage = () => {
                   }}
                 />
               </div>
+
               <div className="flex justify-between relative">
                 {statusSteps.map((step, index) => {
                   const config = statusConfig[step];
+
                   const isDone = index <= currentStepIndex;
+
                   const isCurrent = index === currentStepIndex;
+
                   return (
                     <div
                       key={step}
@@ -152,6 +220,7 @@ const OrderDetailPage = () => {
                       >
                         {isDone ? "✓" : index + 1}
                       </div>
+
                       <p
                         className={`text-xs text-center leading-tight ${
                           isDone
@@ -173,9 +242,10 @@ const OrderDetailPage = () => {
           </div>
         )}
 
-        {/* Produk */}
+        {/* PRODUK */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-4">
           <h3 className="font-semibold text-gray-800 mb-4">🛒 Produk</h3>
+
           <div className="space-y-4">
             {order.items.map((item) => (
               <div key={item._id} className="flex items-center gap-4">
@@ -188,63 +258,94 @@ const OrderDetailPage = () => {
                   alt={item.product?.name}
                   className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
                 />
+
                 <div className="flex-1">
                   <p className="font-medium text-gray-800 text-sm">
                     {item.product?.name}
                   </p>
+
                   <p className="text-xs text-gray-400">
                     {formatRupiah(item.price)} x {item.quantity}
                   </p>
                 </div>
+
                 <p className="font-bold text-sm text-gray-800">
                   {formatRupiah(item.price * item.quantity)}
                 </p>
               </div>
             ))}
           </div>
+
           <div className="border-t border-gray-100 mt-4 pt-4 flex justify-between">
             <span className="font-semibold text-gray-700">Total</span>
+
             <span className="font-bold text-orange-600 text-lg">
               {formatRupiah(order.totalAmount)}
             </span>
           </div>
         </div>
 
-        {/* Alamat */}
+        {/* ALAMAT */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-4">
           <h3 className="font-semibold text-gray-800 mb-3">
             📍 Alamat Pengiriman
           </h3>
+
           <div className="text-sm text-gray-600 space-y-1">
             <p className="font-medium text-gray-800">
               {order.shippingAddress.recipientName}
             </p>
+
             <p>{order.shippingAddress.phone}</p>
+
             <p>{order.shippingAddress.address}</p>
+
             <p>
               {order.shippingAddress.city}, {order.shippingAddress.postalCode}
             </p>
           </div>
         </div>
 
-        {/* Catatan */}
+        {/* CATATAN */}
         {order.notes && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-4">
             <h3 className="font-semibold text-gray-800 mb-2">📝 Catatan</h3>
+
             <p className="text-sm text-gray-600">{order.notes}</p>
           </div>
         )}
 
-        {/* Action Buttons */}
+        {/* COUNTDOWN */}
+        {order.status === "pending" && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center mb-4">
+            <p className="text-sm text-yellow-700 mb-1">
+              ⏳ Selesaikan pembayaran sebelum
+            </p>
+
+            <p className="text-2xl font-bold text-orange-600">{timeLeft}</p>
+          </div>
+        )}
+
+        {/* ACTION BUTTONS */}
         <div className="space-y-3">
           {order.status === "pending" && (
-            <button
-              onClick={() => navigate(`/payment/${order._id}`)}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-xl transition-colors"
-            >
-              Bayar Sekarang
-            </button>
+            <div className="space-y-3">
+              <button
+                onClick={() => navigate(`/payment/${order._id}`)}
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-xl transition-colors"
+              >
+                Bayar Sekarang
+              </button>
+
+              <button
+                onClick={handleCancelOrder}
+                className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-xl transition-colors"
+              >
+                Batalkan Pesanan
+              </button>
+            </div>
           )}
+
           {order.status === "shipped" && (
             <button
               onClick={handleConfirmReceived}
@@ -256,6 +357,7 @@ const OrderDetailPage = () => {
                 : "✅ Konfirmasi Pesanan Diterima"}
             </button>
           )}
+
           {order.status === "delivered" && (
             <Link
               to={`/review/${order._id}`}

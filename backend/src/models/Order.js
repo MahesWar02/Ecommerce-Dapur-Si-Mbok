@@ -48,6 +48,9 @@ const orderSchema = new mongoose.Schema(
       ],
       default: "pending",
     },
+    expiredAt: {
+      type: Date,
+    },
     paymentToken: {
       type: String,
       default: "",

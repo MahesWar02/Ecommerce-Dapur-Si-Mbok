@@ -109,10 +109,7 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
       })
       .addCase(fetchCurrentUser.rejected, (state) => {
-        state.user = null;
-        state.token = null;
-        state.isAuthenticated = false;
-        localStorage.removeItem("token");
+        state.loading = false;
       })
       // ✅ addCase di dalam extraReducers, thunk-nya sudah ada di atas
       .addCase(updateUserProfile.fulfilled, (state, action) => {

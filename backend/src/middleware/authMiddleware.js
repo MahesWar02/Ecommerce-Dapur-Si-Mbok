@@ -25,9 +25,13 @@ export const protect = async (req, res, next) => {
 
 export const authorize = (...roles) => {
   return (req, res, next) => {
+    console.log("ROLE USER:", req.user.role);
+    console.log("ROLE DIIZINKAN:", roles);
+
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({ message: "Tidak memiliki akses" });
     }
+
     next();
   };
 };

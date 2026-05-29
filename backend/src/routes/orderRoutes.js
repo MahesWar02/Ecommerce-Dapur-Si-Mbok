@@ -9,6 +9,7 @@ import {
   getPaymentToken,
   handlePaymentNotification,
   markOrderPaid,
+  cancelOrder,
 } from "../controllers/orderController.js";
 import { protect, authorize } from "../middleware/authMiddleware.js";
 
@@ -20,6 +21,7 @@ router.post("/", protect, createOrder);
 router.get("/my", protect, getMyOrders);
 router.get("/", protect, authorize("admin", "penjual"), getAllOrders);
 router.get("/:id", protect, getOrderById);
+router.put("/:id/cancel", protect, cancelOrder);
 router.put(
   "/:id/status",
   protect,

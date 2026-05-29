@@ -130,20 +130,15 @@ export const createOrder = async (req, res) => {
     }
 
     // Buat order
+    // Buat order
     const order = await Order.create({
       user: req.user._id,
       items: orderItems,
       shippingAddress,
       totalAmount,
       notes,
+      expiredAt: new Date(Date.now() + 2 * 60 * 60 * 1000),
     });
-
-    // Kurangi stok produk
-    for (const item of orderItems) {
-      await Product.findByIdAndUpdate(item.product, {
-        $inc: { stock: -item.quantity },
-      });
-    }
 
     // Kosongkan keranjang
     await Cart.findOneAndUpdate({ user: req.user._id }, { items: [] });
@@ -253,16 +248,112 @@ export const confirmOrderReceived = async (req, res) => {
 export const markOrderPaid = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
+
     if (!order) {
-      return res.status(404).json({ message: "Pesanan tidak ditemukan" });
+      return res.status(404).json({
+        message: "Pesanan tidak ditemukan",
+      });
     }
+
     if (order.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: "Tidak memiliki akses" });
+      return res.status(403).json({
+        message: "Tidak memiliki akses",
+      });
     }
+
+    // Cegah double payment
+    if (order.status === "paid") {
+      return res.status(400).json({
+        message: "Pesanan sudah dibayar",
+      });
+    }
+
+    // Kurangi stok SETELAH pembayaran berhasil
+    for (const item of order.items) {
+      const product = await Product.findById(item.product);
+
+      if (!product) {
+        return res.status(404).json({
+          message: "Produk tidak ditemukan",
+        });
+      }
+
+      // Validasi stok
+      if (product.stock < item.quantity) {
+        return res.status(400).json({
+          message: `Stok ${product.name} tidak cukup`,
+        });
+      }
+
+      product.stock -= item.quantity;
+
+      await product.save();
+    }
+
     order.status = "paid";
+
     await order.save();
+
     res.json(order);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+export const cancelOrder = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        message: "Pesanan tidak ditemukan",
+      });
+    }
+
+    if (order.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: "Tidak memiliki akses",
+      });
+    }
+
+    if (order.status === "paid") {
+      return res.status(400).json({
+        message: "Pesanan yang sudah dibayar tidak bisa dibatalkan",
+      });
+    }
+
+    order.status = "cancelled";
+
+    await order.save();
+
+    res.json({
+      message: "Pesanan berhasil dibatalkan",
+      order,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+export const autoCancelExpiredOrders = async () => {
+  try {
+    const expiredOrders = await Order.find({
+      status: "pending",
+      expiredAt: { $lt: new Date() },
+    });
+
+    for (const order of expiredOrders) {
+      order.status = "cancelled";
+
+      await order.save();
+    }
+
+    console.log("Auto cancel expired orders selesai");
+  } catch (error) {
+    console.log(error.message);
   }
 };
