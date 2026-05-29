@@ -40,6 +40,14 @@ const Navbar = () => {
         <div className="flex items-center gap-3">
           {isAuthenticated && user ? (
             <>
+              {(user?.role === "admin" || user?.role === "penjual") && (
+                <Link
+                  to="/admin/orders"
+                  className="text-gray-600 hover:text-orange-500 text-sm"
+                >
+                  ⚙️ Admin
+                </Link>
+              )}
               <Link
                 to="/cart"
                 className="text-gray-600 hover:text-orange-500 text-sm"

@@ -13,6 +13,9 @@ import NotFoundPage from "./pages/NotFoundPage";
 import ProfilePage from "./pages/buyer/ProfilePage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
+import AdminRoute from "./components/admin/AdminRoute";
+import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
+import AdminOrderDetailPage from "./pages/admin/AdminOrderDetailPage";
 
 function App() {
   return (
@@ -30,6 +33,22 @@ function App() {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+      <Route
+        path="/admin/orders"
+        element={
+          <AdminRoute>
+            <AdminOrdersPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/orders/:id"
+        element={
+          <AdminRoute>
+            <AdminOrderDetailPage />
+          </AdminRoute>
+        }
+      />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

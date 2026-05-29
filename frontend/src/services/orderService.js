@@ -13,3 +13,8 @@ export const getPaymentToken = (orderId) =>
   api.post(`/orders/${orderId}/payment`);
 
 export const markOrderPaid = (id) => api.put(`/orders/${id}/mark-paid`);
+
+export const getAllOrders = () => api.get("/orders");
+
+export const updateOrderStatus = (id, status) =>
+  api.put(`/orders/${id}/status`, { status });
