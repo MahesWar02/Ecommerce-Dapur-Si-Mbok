@@ -43,6 +43,21 @@ export const fetchCurrentUser = createAsyncThunk(
   },
 );
 
+// ✅ Deklarasi di luar, sebelum createSlice
+export const updateUserProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async (data, { rejectWithValue }) => {
+    try {
+      const res = await authService.updateProfile(data);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || "Gagal memperbarui profil",
+      );
+    }
+  },
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState: {
@@ -98,6 +113,10 @@ const authSlice = createSlice({
         state.token = null;
         state.isAuthenticated = false;
         localStorage.removeItem("token");
+      })
+      // ✅ addCase di dalam extraReducers, thunk-nya sudah ada di atas
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.user = action.payload;
       });
   },
 });

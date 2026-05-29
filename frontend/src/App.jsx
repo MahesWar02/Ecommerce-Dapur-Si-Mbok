@@ -10,6 +10,7 @@ import PaymentPage from "./pages/buyer/PaymentPage";
 import MyOrdersPage from "./pages/buyer/MyOrdersPage";
 import OrderDetailPage from "./pages/buyer/OrderDetailPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import ProfilePage from "./pages/buyer/ProfilePage";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
       <Route path="/payment/:id" element={<PaymentPage />} />
       <Route path="/orders" element={<MyOrdersPage />} />
       <Route path="/orders/:id" element={<OrderDetailPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

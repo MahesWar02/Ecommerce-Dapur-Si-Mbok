@@ -76,3 +76,62 @@ export const getMe = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// @desc    Update profile
+// @route   PUT /api/auth/profile
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, phone } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User tidak ditemukan" });
+    }
+
+    user.name = name || user.name;
+    user.phone = phone || user.phone;
+
+    const updatedUser = await user.save();
+
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      role: updatedUser.role,
+      phone: updatedUser.phone,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Change password
+// @route   PUT /api/auth/change-password
+export const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User tidak ditemukan" });
+    }
+
+    const isMatch = await user.matchPassword(currentPassword);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Kata sandi lama salah" });
+    }
+
+    if (newPassword.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Kata sandi baru minimal 6 karakter" });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.json({ message: "Kata sandi berhasil diubah" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

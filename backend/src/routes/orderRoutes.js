@@ -8,12 +8,12 @@ import {
   confirmOrderReceived,
   getPaymentToken,
   handlePaymentNotification,
+  markOrderPaid,
 } from "../controllers/orderController.js";
 import { protect, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Webhook Midtrans — TANPA protect (Midtrans tidak kirim token)
 router.post("/notification", handlePaymentNotification);
 
 router.post("/", protect, createOrder);
@@ -27,6 +27,7 @@ router.put(
   updateOrderStatus,
 );
 router.put("/:id/confirm-received", protect, confirmOrderReceived);
+router.put("/:id/mark-paid", protect, markOrderPaid);
 router.post("/:id/payment", protect, getPaymentToken);
 
 export default router;

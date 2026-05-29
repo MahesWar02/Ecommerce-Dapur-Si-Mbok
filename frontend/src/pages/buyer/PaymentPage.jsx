@@ -53,7 +53,12 @@ const PaymentPage = () => {
       const { token } = res.data;
 
       window.snap.pay(token, {
-        onSuccess: () => {
+        onSuccess: async () => {
+          try {
+            await orderService.markOrderPaid(id);
+          } catch (e) {
+            console.error(e);
+          }
           toast.success("Pembayaran berhasil!");
           navigate(`/orders/${id}?status=success`);
         },
