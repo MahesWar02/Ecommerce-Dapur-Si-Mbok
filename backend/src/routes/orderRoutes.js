@@ -9,6 +9,9 @@ import {
   getPaymentToken,
   handlePaymentNotification,
   markOrderPaid,
+  cancelOrder,
+  getSalesReport,
+  createOfflineOrder,
 } from "../controllers/orderController.js";
 import { protect, authorize } from "../middleware/authMiddleware.js";
 
@@ -17,9 +20,18 @@ const router = express.Router();
 router.post("/notification", handlePaymentNotification);
 
 router.post("/", protect, createOrder);
+router.post(
+  "/offline",
+  protect,
+  authorize("admin", "penjual"),
+  createOfflineOrder,
+);
 router.get("/my", protect, getMyOrders);
+router.get("/report", protect, authorize("admin", "penjual"), getSalesReport);
 router.get("/", protect, authorize("admin", "penjual"), getAllOrders);
 router.get("/:id", protect, getOrderById);
+
+router.put("/:id/cancel", protect, cancelOrder);
 router.put(
   "/:id/status",
   protect,

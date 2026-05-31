@@ -31,17 +31,44 @@ const ProductCard = ({ product, onAddToCart }) => {
         <span className="text-xs text-orange-500 font-medium bg-orange-50 px-2 py-0.5 rounded-full">
           {product.category}
         </span>
+
         <Link to={`/products/${product._id}`}>
           <h3 className="font-medium text-gray-800 hover:text-orange-600 transition-colors text-sm leading-tight mt-1">
             {product.name}
           </h3>
         </Link>
+
+        {/* Rating */}
+        {product.reviewCount > 0 && (
+          <div className="flex items-center gap-1">
+            <div className="flex">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <span
+                  key={s}
+                  className={`text-xs ${
+                    s <= Math.round(product.avgRating || 0)
+                      ? "text-yellow-400"
+                      : "text-gray-300"
+                  }`}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+            <span className="text-xs text-gray-400">
+              {product.avgRating?.toFixed(1)} ({product.reviewCount})
+            </span>
+          </div>
+        )}
+
+        {/* Harga & Stok */}
         <div className="flex items-center justify-between">
           <span className="font-bold text-orange-600 text-sm">
             {formatRupiah(product.price)}
           </span>
           <span className="text-xs text-gray-400">Stok: {product.stock}</span>
         </div>
+
         <button
           onClick={() => onAddToCart(product)}
           disabled={product.stock === 0}

@@ -6,15 +6,8 @@ const orderItemSchema = new mongoose.Schema({
     ref: "Product",
     required: true,
   },
-  quantity: {
-    type: Number,
-    required: true,
-    min: 1,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
+  quantity: { type: Number, required: true, min: 1 },
+  price: { type: Number, required: true },
 });
 
 const orderSchema = new mongoose.Schema(
@@ -26,16 +19,13 @@ const orderSchema = new mongoose.Schema(
     },
     items: [orderItemSchema],
     shippingAddress: {
-      recipientName: { type: String, required: true },
-      phone: { type: String, required: true },
-      address: { type: String, required: true },
-      city: { type: String, required: true },
-      postalCode: { type: String, required: true },
+      recipientName: { type: String, default: "-" },
+      phone: { type: String, default: "-" },
+      address: { type: String, default: "-" },
+      city: { type: String, default: "-" },
+      postalCode: { type: String, default: "-" },
     },
-    totalAmount: {
-      type: Number,
-      required: true,
-    },
+    totalAmount: { type: Number, required: true },
     status: {
       type: String,
       enum: [
@@ -48,14 +38,12 @@ const orderSchema = new mongoose.Schema(
       ],
       default: "pending",
     },
-    paymentToken: {
-      type: String,
-      default: "",
-    },
-    notes: {
-      type: String,
-      default: "",
-    },
+    expiredAt: { type: Date },
+    paymentToken: { type: String, default: "" },
+    notes: { type: String, default: "" },
+    // Transaksi offline
+    isOffline: { type: Boolean, default: false },
+    customerName: { type: String, default: "" },
   },
   { timestamps: true },
 );

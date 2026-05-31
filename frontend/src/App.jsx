@@ -13,6 +13,13 @@ import NotFoundPage from "./pages/NotFoundPage";
 import ProfilePage from "./pages/buyer/ProfilePage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
+import AdminRoute from "./components/admin/AdminRoute";
+import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
+import AdminOrderDetailPage from "./pages/admin/AdminOrderDetailPage";
+import AdminProductsPage from "./pages/admin/AdminProductsPage";
+import ReviewPage from "./pages/buyer/ReviewPage";
+import AdminSalesReportPage from "./pages/admin/AdminSalesReportPage";
+import AdminOfflineOrderPage from "./pages/admin/AdminOfflineOrderPage";
 
 function App() {
   return (
@@ -27,9 +34,51 @@ function App() {
       <Route path="/payment/:id" element={<PaymentPage />} />
       <Route path="/orders" element={<MyOrdersPage />} />
       <Route path="/orders/:id" element={<OrderDetailPage />} />
+      <Route path="/review/:orderId" element={<ReviewPage />} />
+
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+      <Route
+        path="/admin/products"
+        element={
+          <AdminRoute>
+            <AdminProductsPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/orders"
+        element={
+          <AdminRoute>
+            <AdminOrdersPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/orders/:id"
+        element={
+          <AdminRoute>
+            <AdminOrderDetailPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/sales-report"
+        element={
+          <AdminRoute>
+            <AdminSalesReportPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/offline-order"
+        element={
+          <AdminRoute>
+            <AdminOfflineOrderPage />
+          </AdminRoute>
+        }
+      />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

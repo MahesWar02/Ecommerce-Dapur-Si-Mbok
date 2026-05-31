@@ -13,3 +13,14 @@ export const getPaymentToken = (orderId) =>
   api.post(`/orders/${orderId}/payment`);
 
 export const markOrderPaid = (id) => api.put(`/orders/${id}/mark-paid`);
+
+export const getAllOrders = () => api.get("/orders");
+
+export const updateOrderStatus = (id, status) =>
+  api.put(`/orders/${id}/status`, { status });
+
+export const cancelOrder = (id) => api.put(`/orders/${id}/cancel`);
+
+export const getSalesReport = (params) => api.get("/orders/report", { params });
+
+export const createOfflineOrder = (data) => api.post("/orders/offline", data);

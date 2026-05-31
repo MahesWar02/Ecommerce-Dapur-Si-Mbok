@@ -130,20 +130,15 @@ export const createOrder = async (req, res) => {
     }
 
     // Buat order
+    // Buat order
     const order = await Order.create({
       user: req.user._id,
       items: orderItems,
       shippingAddress,
       totalAmount,
       notes,
+      expiredAt: new Date(Date.now() + 2 * 60 * 60 * 1000),
     });
-
-    // Kurangi stok produk
-    for (const item of orderItems) {
-      await Product.findByIdAndUpdate(item.product, {
-        $inc: { stock: -item.quantity },
-      });
-    }
 
     // Kosongkan keranjang
     await Cart.findOneAndUpdate({ user: req.user._id }, { items: [] });
@@ -253,15 +248,240 @@ export const confirmOrderReceived = async (req, res) => {
 export const markOrderPaid = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
+
     if (!order) {
-      return res.status(404).json({ message: "Pesanan tidak ditemukan" });
+      return res.status(404).json({
+        message: "Pesanan tidak ditemukan",
+      });
     }
+
     if (order.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: "Tidak memiliki akses" });
+      return res.status(403).json({
+        message: "Tidak memiliki akses",
+      });
     }
+
+    // Cegah double payment
+    if (order.status === "paid") {
+      return res.status(400).json({
+        message: "Pesanan sudah dibayar",
+      });
+    }
+
+    // Kurangi stok SETELAH pembayaran berhasil
+    for (const item of order.items) {
+      const product = await Product.findById(item.product);
+
+      if (!product) {
+        return res.status(404).json({
+          message: "Produk tidak ditemukan",
+        });
+      }
+
+      // Validasi stok
+      if (product.stock < item.quantity) {
+        return res.status(400).json({
+          message: `Stok ${product.name} tidak cukup`,
+        });
+      }
+
+      product.stock -= item.quantity;
+
+      await product.save();
+    }
+
     order.status = "paid";
+
     await order.save();
+
     res.json(order);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+export const cancelOrder = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        message: "Pesanan tidak ditemukan",
+      });
+    }
+
+    if (order.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: "Tidak memiliki akses",
+      });
+    }
+
+    if (order.status === "paid") {
+      return res.status(400).json({
+        message: "Pesanan yang sudah dibayar tidak bisa dibatalkan",
+      });
+    }
+
+    order.status = "cancelled";
+
+    await order.save();
+
+    res.json({
+      message: "Pesanan berhasil dibatalkan",
+      order,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+export const autoCancelExpiredOrders = async () => {
+  try {
+    const expiredOrders = await Order.find({
+      status: "pending",
+      expiredAt: { $lt: new Date() },
+    });
+
+    for (const order of expiredOrders) {
+      order.status = "cancelled";
+
+      await order.save();
+    }
+
+    console.log("Auto cancel expired orders selesai");
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+// @desc  Laporan penjualan — SD #15
+// @route GET /api/orders/report?startDate=&endDate=
+export const getSalesReport = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    let filter = {
+      status: { $in: ["paid", "processing", "shipped", "delivered"] },
+    };
+
+    if (startDate || endDate) {
+      filter.createdAt = {};
+      if (startDate) filter.createdAt.$gte = new Date(startDate);
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        filter.createdAt.$lte = end;
+      }
+    }
+
+    const orders = await Order.find(filter)
+      .populate("items.product", "name category price")
+      .populate("user", "name email")
+      .sort({ createdAt: -1 });
+
+    // Hitung ringkasan
+    const totalRevenue = orders.reduce((sum, o) => sum + o.totalAmount, 0);
+    const totalOrders = orders.length;
+
+    // Produk terlaris
+    const productMap = {};
+    orders.forEach((o) => {
+      o.items.forEach((item) => {
+        const pid = item.product?._id?.toString();
+        if (!pid) return;
+        if (!productMap[pid]) {
+          productMap[pid] = {
+            name: item.product.name,
+            category: item.product.category,
+            qty: 0,
+            revenue: 0,
+          };
+        }
+        productMap[pid].qty += item.quantity;
+        productMap[pid].revenue += item.price * item.quantity;
+      });
+    });
+
+    const topProducts = Object.values(productMap)
+      .sort((a, b) => b.qty - a.qty)
+      .slice(0, 5);
+
+    res.json({ orders, totalRevenue, totalOrders, topProducts });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const createOfflineOrder = async (req, res) => {
+  try {
+    const { customerName, items, notes, transactionDate } = req.body;
+
+    if (!customerName || !customerName.trim()) {
+      return res.status(400).json({ message: "Nama pelanggan wajib diisi" });
+    }
+    if (!items || items.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Minimal satu produk harus dipilih" });
+    }
+
+    let totalAmount = 0;
+    const orderItems = [];
+
+    for (const item of items) {
+      if (!item.product || item.quantity < 1) {
+        return res.status(400).json({ message: "Data produk tidak valid" });
+      }
+      const product = await Product.findById(item.product);
+      if (!product) {
+        return res.status(404).json({ message: "Produk tidak ditemukan" });
+      }
+      if (product.stock < item.quantity) {
+        return res.status(400).json({
+          message: `Stok ${product.name} tidak cukup (tersisa ${product.stock})`,
+        });
+      }
+      orderItems.push({
+        product: product._id,
+        quantity: item.quantity,
+        price: product.price,
+      });
+      totalAmount += product.price * item.quantity;
+      product.stock -= item.quantity;
+      await product.save();
+    }
+
+    // Gunakan tanggal dari input, fallback ke sekarang
+    const createdAt = transactionDate ? new Date(transactionDate) : new Date();
+
+    const order = new Order({
+      user: req.user._id,
+      items: orderItems,
+      shippingAddress: {
+        recipientName: customerName,
+        phone: "-",
+        address: "Transaksi Offline",
+        city: "-",
+        postalCode: "-",
+      },
+      totalAmount,
+      notes: notes || "",
+      status: "delivered",
+      isOffline: true,
+      customerName: customerName.trim(),
+    });
+
+    // Override timestamps dengan tanggal transaksi yang dipilih
+    order.createdAt = createdAt;
+    order.updatedAt = createdAt;
+    await order.save();
+
+    await order.populate("items.product", "name price image");
+    res.status(201).json(order);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

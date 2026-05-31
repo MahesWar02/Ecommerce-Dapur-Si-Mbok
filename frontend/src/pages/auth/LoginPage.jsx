@@ -30,7 +30,7 @@ const LoginPage = () => {
         res.data.user.role === ROLES.ADMIN ||
         res.data.user.role === ROLES.PENJUAL
       ) {
-        navigate("/admin/products");
+        navigate("/admin/orders");
       } else {
         navigate("/");
       }
