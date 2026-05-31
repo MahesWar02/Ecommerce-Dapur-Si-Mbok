@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../store/slices/authSlice";
+import NotificationBell from "./NotificationBell";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -48,6 +49,11 @@ const Navbar = () => {
                   ⚙️ Admin
                 </Link>
               )}
+
+              {isAuthenticated && user?.role === "pembeli" && (
+                <NotificationBell />
+              )}
+
               <Link
                 to="/cart"
                 className="text-gray-600 hover:text-orange-500 text-sm"

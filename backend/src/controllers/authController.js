@@ -12,7 +12,7 @@ const generateToken = (id) => {
 // @route   POST /api/auth/register
 export const register = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     // Cek email sudah terdaftar
     const userExists = await User.findOne({ email });
@@ -21,7 +21,7 @@ export const register = async (req, res) => {
     }
 
     // Buat user baru
-    const user = await User.create({ name, email, password, role });
+    const user = await User.create({ name, email, password, role: "pembeli" });
 
     res.status(201).json({ message: "Registrasi berhasil" });
   } catch (error) {

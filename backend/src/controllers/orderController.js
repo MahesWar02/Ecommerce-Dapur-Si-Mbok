@@ -2,6 +2,9 @@ import Order from "../models/Order.js";
 import Product from "../models/Product.js";
 import Cart from "../models/Cart.js";
 import midtransClient from "midtrans-client";
+// Tambah import ini di paling atas
+import { createNotification } from "./notificationController.js";
+
 // @desc    Create order
 // @route   POST /api/orders
 export const getPaymentToken = async (req, res) => {
@@ -143,6 +146,17 @@ export const createOrder = async (req, res) => {
     // Kosongkan keranjang
     await Cart.findOneAndUpdate({ user: req.user._id }, { items: [] });
 
+    await createNotification({
+      userId: req.user._id,
+      title: "Pesanan Berhasil Dibuat",
+      message: `Pesanan #${order._id
+        .toString()
+        .slice(-8)
+        .toUpperCase()} berhasil dibuat. Silakan lakukan pembayaran.`,
+      type: "order",
+      orderId: order._id,
+    });
+
     await order.populate("items.product");
     res.status(201).json(order);
   } catch (error) {
@@ -217,6 +231,22 @@ export const updateOrderStatus = async (req, res) => {
 
     order.status = status;
     await order.save();
+
+    const statusLabel = {
+      processing: "Sedang Diproses",
+      shipped: "Sedang Dikirim",
+      delivered: "Selesai",
+      cancelled: "Dibatalkan",
+    };
+
+    await createNotification({
+      userId: order.user,
+      title: "Status Pesanan Diperbarui",
+      message: `Pesanan #${order._id.toString().slice(-8).toUpperCase()} ${statusLabel[order.status] ? `sekarang ${statusLabel[order.status]}` : `statusnya diperbarui`}.`,
+      type: "status",
+      orderId: order._id,
+    });
+
     res.json(order);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -293,6 +323,17 @@ export const markOrderPaid = async (req, res) => {
     order.status = "paid";
 
     await order.save();
+
+    await createNotification({
+      userId: order.user,
+      title: "Pembayaran Diterima",
+      message: `Pembayaran pesanan #${order._id
+        .toString()
+        .slice(-8)
+        .toUpperCase()} berhasil dikonfirmasi.`,
+      type: "payment",
+      orderId: order._id,
+    });
 
     res.json(order);
   } catch (error) {
