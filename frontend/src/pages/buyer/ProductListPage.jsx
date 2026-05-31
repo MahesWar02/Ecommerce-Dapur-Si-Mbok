@@ -5,16 +5,9 @@ import { fetchProducts, setFilters } from "../../store/slices/productSlice";
 import { addItemToCart } from "../../store/slices/cartSlice";
 import ProductCard from "../../components/buyer/ProductCard";
 import Navbar from "../../components/shared/Navbar";
+import { CATEGORIES } from "../../utils/constants";
 
-const CATEGORIES = [
-  "Semua",
-  "Kue",
-  "Jajanan Pasar",
-  "Sambal",
-  "Lauk Pauk",
-  "Cemilan",
-  "Minuman",
-];
+const ALL_CATEGORIES = ["Semua", ...CATEGORIES];
 
 const ProductListPage = () => {
   const dispatch = useDispatch();
@@ -83,16 +76,15 @@ const ProductListPage = () => {
         </form>
 
         <div className="flex gap-2 overflow-x-auto pb-2 mb-6">
-          {CATEGORIES.map((cat) => (
+          {ALL_CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors
-                ${
-                  activeCategory === cat
-                    ? "bg-orange-500 text-white"
-                    : "bg-white border border-gray-200 text-gray-600 hover:border-orange-300"
-                }`}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
+                activeCategory === cat
+                  ? "bg-orange-500 text-white"
+                  : "bg-white text-gray-600 hover:bg-orange-50 border border-gray-200"
+              }`}
             >
               {cat}
             </button>

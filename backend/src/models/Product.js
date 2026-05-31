@@ -25,6 +25,14 @@ const productSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
+      enum: [
+        "Kue Basah",
+        "Bolu & Cake",
+        "Paket",
+        "Kue Kering",
+        "Camilan",
+        "Lainnya",
+      ],
     },
     image: {
       type: String,

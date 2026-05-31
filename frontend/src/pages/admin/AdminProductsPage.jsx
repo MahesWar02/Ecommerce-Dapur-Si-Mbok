@@ -3,14 +3,9 @@ import { toast } from "react-toastify";
 import AdminLayout from "../../components/admin/AdminLayout";
 import * as productService from "../../services/productService";
 
-const CATEGORIES = [
-  "Makanan Berat",
-  "Makanan Ringan",
-  "Minuman",
-  "Dessert",
-  "Paket",
-  "Lainnya",
-];
+import { CATEGORIES } from "../../utils/constants";
+
+// Hapus const CATEGORIES = [...] yang lama
 
 const emptyForm = {
   name: "",
