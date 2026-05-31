@@ -234,3 +234,131 @@ export const resetPassword = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// @desc    Get semua alamat tersimpan
+// @route   GET /api/auth/addresses
+export const getAddresses = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    res.json(user.savedAddresses);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Tambah alamat baru
+// @route   POST /api/auth/addresses
+export const addAddress = async (req, res) => {
+  try {
+    const {
+      label,
+      recipientName,
+      phone,
+      address,
+      city,
+      postalCode,
+      isDefault,
+    } = req.body;
+
+    if (!recipientName || !phone || !address || !city || !postalCode) {
+      return res
+        .status(400)
+        .json({ message: "Semua field alamat wajib diisi" });
+    }
+
+    const user = await User.findById(req.user._id);
+
+    // Maksimal 5 alamat
+    if (user.savedAddresses.length >= 5) {
+      return res.status(400).json({ message: "Maksimal 5 alamat tersimpan" });
+    }
+
+    // Kalau isDefault true, reset semua alamat lain
+    if (isDefault) {
+      user.savedAddresses.forEach((a) => (a.isDefault = false));
+    }
+
+    // Kalau ini alamat pertama, otomatis jadi default
+    const shouldBeDefault = isDefault || user.savedAddresses.length === 0;
+
+    user.savedAddresses.push({
+      label: label || "Rumah",
+      recipientName,
+      phone,
+      address,
+      city,
+      postalCode,
+      isDefault: shouldBeDefault,
+    });
+
+    await user.save();
+    res.status(201).json(user.savedAddresses);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Update alamat
+// @route   PUT /api/auth/addresses/:addressId
+export const updateAddress = async (req, res) => {
+  try {
+    const {
+      label,
+      recipientName,
+      phone,
+      address,
+      city,
+      postalCode,
+      isDefault,
+    } = req.body;
+    const user = await User.findById(req.user._id);
+
+    const addr = user.savedAddresses.id(req.params.addressId);
+    if (!addr) {
+      return res.status(404).json({ message: "Alamat tidak ditemukan" });
+    }
+
+    if (isDefault) {
+      user.savedAddresses.forEach((a) => (a.isDefault = false));
+    }
+
+    addr.label = label || addr.label;
+    addr.recipientName = recipientName || addr.recipientName;
+    addr.phone = phone || addr.phone;
+    addr.address = address || addr.address;
+    addr.city = city || addr.city;
+    addr.postalCode = postalCode || addr.postalCode;
+    addr.isDefault = isDefault ?? addr.isDefault;
+
+    await user.save();
+    res.json(user.savedAddresses);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Hapus alamat
+// @route   DELETE /api/auth/addresses/:addressId
+export const deleteAddress = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    const addr = user.savedAddresses.id(req.params.addressId);
+
+    if (!addr) {
+      return res.status(404).json({ message: "Alamat tidak ditemukan" });
+    }
+
+    const wasDefault = addr.isDefault;
+    user.savedAddresses.pull(req.params.addressId);
+
+    // Kalau yang dihapus adalah default, jadikan yang pertama sebagai default
+    if (wasDefault && user.savedAddresses.length > 0) {
+      user.savedAddresses[0].isDefault = true;
+    }
+
+    await user.save();
+    res.json(user.savedAddresses);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

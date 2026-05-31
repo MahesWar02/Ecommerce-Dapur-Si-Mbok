@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import * as orderService from "../../services/orderService";
 import Navbar from "../../components/shared/Navbar";
+import * as authService from "../../services/authService";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -15,12 +16,13 @@ const CheckoutPage = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm();
 
   useEffect(() => {
     if (items.length === 0) navigate("/cart");
-  }, [items]);
+  }, [items, navigate]);
 
   const formatRupiah = (amount) => {
     return new Intl.NumberFormat("id-ID", {
@@ -68,6 +70,30 @@ const CheckoutPage = () => {
     }
   };
 
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState("");
+
+  useEffect(() => {
+    authService
+      .getAddresses()
+      .then((res) => setSavedAddresses(res.data))
+      .catch(() => {});
+  }, []);
+
+  const handleSelectAddress = (addr) => {
+    setSelectedAddressId(addr._id);
+    const fields = {
+      recipientName: addr.recipientName,
+      phone: addr.phone,
+      address: addr.address,
+      city: addr.city,
+      postalCode: addr.postalCode,
+    };
+    Object.entries(fields).forEach(([key, value]) => {
+      setValue(key, value, { shouldValidate: true, shouldDirty: true });
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -113,6 +139,57 @@ const CheckoutPage = () => {
                     onSubmit={handleSubmit(handleFormSubmit)}
                     className="space-y-4"
                   >
+                    {/* Pilih dari alamat tersimpan — di luar grid */}
+                    {savedAddresses.length > 0 && (
+                      <div className="mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Pilih Alamat Tersimpan
+                        </label>
+                        <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                          {savedAddresses.map((addr) => (
+                            <button
+                              key={addr._id}
+                              type="button"
+                              onClick={() => handleSelectAddress(addr)}
+                              className={`w-full text-left p-3 rounded-lg border text-sm transition-colors ${
+                                selectedAddressId === addr._id
+                                  ? "border-orange-500 bg-orange-50"
+                                  : "border-gray-200 hover:border-orange-300"
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 mb-0.5">
+                                <span className="font-medium text-gray-800">
+                                  {addr.label}
+                                </span>
+                                {addr.isDefault && (
+                                  <span className="text-xs bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full">
+                                    Utama
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-gray-600">
+                                {addr.recipientName} · {addr.phone}
+                              </p>
+                              <p className="text-gray-400 text-xs truncate">
+                                {addr.address}, {addr.city}
+                              </p>
+                            </button>
+                          ))}
+                        </div>
+                        <div className="relative my-4">
+                          <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-200" />
+                          </div>
+                          <div className="relative flex justify-center text-xs text-gray-400">
+                            <span className="bg-white px-3">
+                              atau isi manual
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Nama Penerima & No. Telepon sejajar */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
