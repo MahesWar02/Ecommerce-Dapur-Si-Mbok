@@ -38,8 +38,13 @@ const productSlice = createSlice({
     setFilters: (state, action) => {
       state.filters = { ...state.filters, ...action.payload };
     },
+
     clearFilters: (state) => {
       state.filters = { search: "", category: "" };
+    },
+
+    clearSelectedProduct: (state) => {
+      state.selectedProduct = null;
     },
   },
   extraReducers: (builder) => {
@@ -54,12 +59,10 @@ const productSlice = createSlice({
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      })
-      .addCase(fetchProductById.fulfilled, (state, action) => {
-        state.selectedProduct = action.payload;
       });
   },
 });
 
-export const { setFilters, clearFilters } = productSlice.actions;
+export const { setFilters, clearFilters, clearSelectedProduct } =
+  productSlice.actions;
 export default productSlice.reducer;

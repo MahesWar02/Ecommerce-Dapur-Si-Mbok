@@ -2,7 +2,10 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { fetchProductById } from "../../store/slices/productSlice";
+import {
+  fetchProductById,
+  clearSelectedProduct,
+} from "../../store/slices/productSlice";
 import { addItemToCart } from "../../store/slices/cartSlice";
 import Navbar from "../../components/shared/Navbar";
 import * as reviewService from "../../services/reviewService";
@@ -20,9 +23,9 @@ const ProductDetailPage = () => {
   const [reviewsLoading, setReviewsLoading] = useState(false);
 
   useEffect(() => {
+    dispatch(clearSelectedProduct());
     dispatch(fetchProductById(id));
-  }, [id]);
-
+  }, [id, dispatch]);
   const loadReviews = useCallback(async () => {
     if (!id) return;
     setReviewsLoading(true);
@@ -78,17 +81,39 @@ const ProductDetailPage = () => {
     }
   };
 
-  if (loading) {
+  if (loading || !product) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        <div className="flex justify-center items-center py-20">
-          <div className="w-10 h-10 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin" />
+
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="grid md:grid-cols-2 gap-8 animate-pulse">
+            {/* Skeleton Gambar */}
+            <div className="aspect-square rounded-2xl bg-gray-200"></div>
+
+            {/* Skeleton Detail */}
+            <div className="space-y-4">
+              <div className="h-6 w-24 bg-gray-200 rounded"></div>
+
+              <div className="h-10 w-3/4 bg-gray-200 rounded"></div>
+
+              <div className="h-10 w-40 bg-gray-200 rounded"></div>
+
+              <div className="space-y-2">
+                <div className="h-4 bg-gray-200 rounded"></div>
+                <div className="h-4 bg-gray-200 rounded"></div>
+                <div className="h-4 w-2/3 bg-gray-200 rounded"></div>
+              </div>
+
+              <div className="h-12 w-full bg-gray-200 rounded"></div>
+
+              <div className="h-12 w-full bg-gray-200 rounded"></div>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
-
   if (!product) return null;
 
   return (
