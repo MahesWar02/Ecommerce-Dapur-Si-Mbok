@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCurrentUser } from "./store/slices/authSlice";
 import { Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
@@ -22,6 +25,11 @@ import AdminSalesReportPage from "./pages/admin/AdminSalesReportPage";
 import AdminOfflineOrderPage from "./pages/admin/AdminOfflineOrderPage";
 
 function App() {
+  const dispatch = useDispatch();
+  const { token } = useSelector((state) => state.auth);
+  useEffect(() => {
+    if (token) dispatch(fetchCurrentUser());
+  }, []);
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
