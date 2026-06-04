@@ -15,7 +15,7 @@ const ProductCard = ({ product, onAddToCart }) => {
         <div className="aspect-square bg-orange-50 overflow-hidden">
           {product.image ? (
             <img
-              src={`http://localhost:5000${product.image}`}
+              src={product.image}
               alt={product.name}
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
             />

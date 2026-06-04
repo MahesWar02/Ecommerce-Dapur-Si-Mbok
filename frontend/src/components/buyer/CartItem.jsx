@@ -29,11 +29,7 @@ const CartItem = ({ item }) => {
     <div className="flex items-center gap-4 py-4 border-b border-gray-100 last:border-0">
       {/* Gambar */}
       <img
-        src={
-          item.product?.image
-            ? `http://localhost:5000${item.product.image}`
-            : "/placeholder.png"
-        }
+        src={item.product?.image || "/placeholder.png"}
         alt={item.product?.name}
         className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
       />

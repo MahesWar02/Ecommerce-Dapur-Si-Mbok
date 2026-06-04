@@ -106,11 +106,7 @@ const MyOrdersPage = () => {
                     {order.items.slice(0, 3).map((item) => (
                       <div key={item._id} className="flex items-center gap-2">
                         <img
-                          src={
-                            item.product?.image
-                              ? `http://localhost:5000${item.product.image}`
-                              : "/placeholder.png"
-                          }
+                          src={item.product?.image || "/placeholder.png"}
                           alt={item.product?.name}
                           className="w-12 h-12 object-cover rounded-lg"
                         />

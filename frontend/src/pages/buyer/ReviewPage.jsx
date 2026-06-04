@@ -184,7 +184,7 @@ const ReviewPage = () => {
                 <div className="flex items-center gap-3 mb-4">
                   {item.product.image ? (
                     <img
-                      src={`http://localhost:5000${item.product.image}`}
+                      src={item.product.image}
                       alt={item.product.name}
                       className="w-14 h-14 rounded-lg object-cover border border-gray-100"
                     />

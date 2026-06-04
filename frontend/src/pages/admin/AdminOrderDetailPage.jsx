@@ -226,11 +226,7 @@ const AdminOrderDetailPage = () => {
             {order.items.map((item) => (
               <div key={item._id} className="flex items-center gap-4">
                 <img
-                  src={
-                    item.product?.image
-                      ? `http://localhost:5000${item.product.image}`
-                      : "/placeholder.png"
-                  }
+                  src={item.product?.image || "/placeholder.png"}
                   alt={item.product?.name}
                   className="w-14 h-14 object-cover rounded-lg flex-shrink-0"
                 />

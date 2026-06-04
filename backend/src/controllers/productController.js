@@ -42,7 +42,7 @@ export const getProductById = async (req, res) => {
 export const createProduct = async (req, res) => {
   try {
     const { name, description, price, stock, category } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : "";
+    const image = req.file ? req.file.path : "";
 
     const product = await Product.create({
       name,
@@ -64,7 +64,7 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {
     const { name, description, price, stock, category } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : undefined;
+    const image = req.file ? req.file.path : undefined;
 
     const product = await Product.findById(req.params.id);
     if (!product) {

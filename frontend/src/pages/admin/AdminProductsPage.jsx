@@ -33,7 +33,7 @@ const ProductFormModal = ({ mode, product, onClose, onSaved }) => {
         category: product.category || "",
         image: null,
       });
-      if (product.image) setPreview(`http://localhost:5000${product.image}`);
+      if (product.image) setPreview(product.image);
     }
   }, [mode, product]);
 
@@ -457,7 +457,7 @@ const AdminProductsPage = () => {
                         <div className="flex items-center gap-3">
                           {p.image ? (
                             <img
-                              src={`http://localhost:5000${p.image}`}
+                              src={p.image}
                               alt={p.name}
                               className="w-12 h-12 rounded-lg object-cover border border-gray-100"
                             />

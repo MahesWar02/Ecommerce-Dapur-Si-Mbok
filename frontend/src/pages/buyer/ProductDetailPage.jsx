@@ -109,7 +109,7 @@ const ProductDetailPage = () => {
           <div className="aspect-square rounded-2xl overflow-hidden bg-orange-50 flex items-center justify-center">
             {product.image ? (
               <img
-                src={`http://localhost:5000${product.image}`}
+                src={product.image}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />

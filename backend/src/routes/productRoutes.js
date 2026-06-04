@@ -8,17 +8,16 @@ import {
 } from "../controllers/productController.js";
 import { protect, authorize } from "../middleware/authMiddleware.js";
 import multer from "multer";
-import path from "path";
+import cloudinary from "../config/cloudinary.js";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
 
 const router = express.Router();
 
-// Setup multer untuk upload gambar
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}${path.extname(file.originalname)}`);
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "dapur-si-mbok",
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
   },
 });
 
