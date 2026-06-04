@@ -1,0 +1,164 @@
+[
+  {
+    "_id": {
+      "$oid": "69fff35844765245403f58e2"
+    },
+    "name": "Test User",
+    "email": "test@gmail.com",
+    "password": "$2b$10$a6WS1hFTP0rGspy8nWumVOKCvNGRXQIzM983xUJ87XyEpWWK1FpCG",
+    "role": "pembeli",
+    "phone": "",
+    "createdAt": {
+      "$date": "2026-05-10T02:54:16.238Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-10T02:54:16.238Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "69fffc8e54656948dff9ffdb"
+    },
+    "name": "MAHESWARA ABHISTA HAMDAN HAFIZ",
+    "email": "2210631170128@student.unsika.ac.id",
+    "password": "$2b$10$dgme/iigJ6ISdcrFQwKGLu54y4sAgnFfGlpFqV6vEyo8pkQ5fL.ES",
+    "role": "pembeli",
+    "phone": "",
+    "createdAt": {
+      "$date": "2026-05-10T03:33:34.447Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-29T10:13:12.903Z"
+    },
+    "__v": 0,
+    "resetToken": "65eb8967d4c08befb3ab2ddef5d711130d29c9db191c8cf714bc30e0e925037b",
+    "resetTokenExpiry": {
+      "$date": "2026-05-29T11:13:12.902Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a0001e321858b59dd4d234c"
+    },
+    "name": "MAHESWARA ABHISTA HAMDAN HAFIZ",
+    "email": "emailimel@gmail.com",
+    "password": "$2b$10$W4yU9RZ.IS928mplppyDn.0eSEKJyNoBYz0D.SXmlnIRowZESfb7i",
+    "role": "pembeli",
+    "phone": "",
+    "createdAt": {
+      "$date": "2026-05-10T03:56:19.385Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-10T03:56:19.385Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a00a73249c866522783eeba"
+    },
+    "name": "Admin Dapur",
+    "email": "dapursimbok0@gmail.com",
+    "password": "$2b$10$LS2HN.2tXK6hdfgvKeIz9OVNlB99L2tCXGtM469BWUjKhHBgN4e.C",
+    "role": "admin",
+    "phone": "",
+    "createdAt": {
+      "$date": "2026-05-10T15:41:38.492Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-10T15:41:38.492Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a194cd1ce1b466c7077df32"
+    },
+    "name": "MAHESWARA ABHISTA HAMDAN HAFIZ",
+    "email": "imail@gmail.com",
+    "password": "$2b$10$Pii8Le33kcgXFJIo4j0Bfunv0wMAOPZQ.HccSHppt7lhX4JyqBNGS",
+    "role": "pembeli",
+    "phone": "08161765455",
+    "createdAt": {
+      "$date": "2026-05-29T08:22:41.943Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-29T10:12:44.991Z"
+    },
+    "__v": 0,
+    "resetToken": "89571140c822a99d870a86267bc9786e7b684a0e80be4bcfe75aa03852d10841",
+    "resetTokenExpiry": {
+      "$date": "2026-05-29T11:12:44.988Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a196e5a77592e949f91b3c1"
+    },
+    "name": "Maheswara A.",
+    "email": "staabhi71@gmail.com",
+    "password": "$2b$10$5n2sQqBYg8LE0vUx6.6HRe96oG6cbekFOW4M00U//tywuDHG9z0lC",
+    "role": "pembeli",
+    "phone": "",
+    "resetToken": null,
+    "resetTokenExpiry": null,
+    "createdAt": {
+      "$date": "2026-05-29T10:45:46.932Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-29T12:02:56.445Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1972649eed7eaf50d90119"
+    },
+    "name": "Maheswara A.",
+    "email": "siapaaja@gmail.com",
+    "password": "$2b$10$0Fl4xtCT6Z8tKymvR3WDTu2qoK8He8oqPGjtBFvzwSatkaZZYZwQG",
+    "role": "pembeli",
+    "phone": "",
+    "resetToken": null,
+    "resetTokenExpiry": null,
+    "createdAt": {
+      "$date": "2026-05-29T11:03:00.393Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-29T11:03:00.393Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a19768f1f05fb7e71d2646e"
+    },
+    "name": "furelise",
+    "email": "furelis@gmail.com",
+    "password": "$2b$10$x5UO5a/l6lx6Y0bm9O.EpuUrY6awpuWbU5IIty/8eiw34WChe7.t2",
+    "role": "pembeli",
+    "phone": "089522872857",
+    "createdAt": {
+      "$date": "2026-05-29T11:20:47.998Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-31T09:29:06.376Z"
+    },
+    "__v": 1,
+    "savedAddresses": [
+      {
+        "label": "Rumah",
+        "recipientName": "MAHESWARA ABHISTA HAMDAN HAFIZ",
+        "phone": "081617019485",
+        "address": "Perum Trully Purwasari Blok N / No.17, Purwasari, Karawang, Jawa Barat",
+        "city": "Kab. Karawang",
+        "postalCode": "41373",
+        "isDefault": true,
+        "_id": {
+          "$oid": "6a1bff6270292ccb197f7b22"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,482 @@
+[
+  {
+    "_id": {
+      "$oid": "6a00af72d72c55599ef86a2c"
+    },
+    "name": "Bolu Pisang",
+    "description": "Kue bolu dengan campuran pisang dan tekstur berserat",
+    "price": 35000,
+    "stock": 3,
+    "category": "Bolu & Cake",
+    "image": "/uploads/1778429810094.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-10T16:16:50.129Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T10:03:28.995Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a00af86d72c55599ef86a2f"
+    },
+    "name": "Bolu Kukus Pandan",
+    "description": "Bolu kukus lembut aroma pandan dengan tekstur mengembang",
+    "price": 30000,
+    "stock": 4,
+    "category": "Bolu & Cake",
+    "image": "/uploads/1778429830161.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-10T16:17:10.165Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T10:03:18.510Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a00af97d72c55599ef86a32"
+    },
+    "name": "Lapis Legit",
+    "description": "Kue lapis legit premium dengan lapisan tipis dan rasa manis gurih",
+    "price": 45000,
+    "stock": 6,
+    "category": "Bolu & Cake",
+    "image": "/uploads/1778429847858.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-10T16:17:27.863Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T10:03:40.961Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a00afa7d72c55599ef86a35"
+    },
+    "name": "Risoles Mayo",
+    "description": "Risoles dengan isian mayo, beef, dan telur",
+    "price": 5000,
+    "stock": 14,
+    "category": "Kue Basah",
+    "image": "/uploads/1778429863895.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-10T16:17:43.900Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T10:03:59.069Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a00afb7d72c55599ef86a38"
+    },
+    "name": "Lemper Ayam",
+    "description": "Lemper nasi ketan dengan isian ayam suwir berbumbu",
+    "price": 5000,
+    "stock": 13,
+    "category": "Kue Basah",
+    "image": "/uploads/1778429879507.jpg",
+    "avgRating": 5,
+    "reviewCount": 1,
+    "createdAt": {
+      "$date": "2026-05-10T16:17:59.517Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T10:04:15.362Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a19df1c9052185c8160798a"
+    },
+    "name": "Putu Ayu",
+    "description": "Jajanan pasar tradisional lembut dengan parutan kelapa diatasnya",
+    "price": 3000,
+    "stock": 15,
+    "category": "Kue Basah",
+    "image": "/uploads/1780080412075.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-29T18:46:52.121Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T10:04:31.121Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab185c888ba2bb572fa48"
+    },
+    "name": "Cantik Manis",
+    "description": "Kue tradisional berbahan tepung hunkwe dan mutiara dengan rasa manis serta tekstur lembut.",
+    "price": 2000,
+    "stock": 20,
+    "category": "Kue Basah",
+    "image": "/uploads/1780134277900.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T09:44:37.979Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T09:44:37.979Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab1a9c888ba2bb572fa4c"
+    },
+    "name": "Dadar Gulung",
+    "description": "Kulit pandan lembut dengan isian kelapa parut dan gula merah yang manis.",
+    "price": 2000,
+    "stock": 15,
+    "category": "Kue Basah",
+    "image": "/uploads/1780134313538.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T09:45:13.544Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T09:45:13.544Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab1cdc888ba2bb572fa51"
+    },
+    "name": "Pastel",
+    "description": "Pastel goreng renyah berisi sayuran segar dan telur berbumbu.",
+    "price": 3000,
+    "stock": 20,
+    "category": "Kue Basah",
+    "image": "/uploads/1780134349614.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T09:45:49.620Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T09:45:49.620Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab254c888ba2bb572fa57"
+    },
+    "name": "Risol Sayur",
+    "description": "dibuat dengan kulit risol yang tipis dan lembut, serta dibalur dengan tepung roti. Diisi campuran wortel, kentang, dan berbumbu gurih. Digoreng hingga keemasan sehingga menghasilkan cita rasa yang lezat dan disukai berbagai kalangan.",
+    "price": 3000,
+    "stock": 15,
+    "category": "Kue Basah",
+    "image": "/uploads/1780134484854.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T09:48:04.861Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T09:48:04.861Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab288c888ba2bb572fa5c"
+    },
+    "name": "Brownies Panggang",
+    "description": "Brownies cokelat panggang dengan tekstur padat, lembut, dan kaya rasa cokelat.",
+    "price": 45000,
+    "stock": 8,
+    "category": "Bolu & Cake",
+    "image": "/uploads/1780134536173.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T09:48:56.179Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T09:48:56.179Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab2a2c888ba2bb572fa60"
+    },
+    "name": "Brownies Kukus",
+    "description": "Brownies kukus lembut dengan cita rasa cokelat yang manis dan nikmat.",
+    "price": 4000,
+    "stock": 5,
+    "category": "Bolu & Cake",
+    "image": "/uploads/1780134575000.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T09:49:22.296Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T09:49:35.029Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab2d2c888ba2bb572fa69"
+    },
+    "name": "Bolu Tape",
+    "description": "Bolu berbahan tape singkong pilihan dengan aroma khas dan tekstur empuk.",
+    "price": 40000,
+    "stock": 5,
+    "category": "Kue Basah",
+    "image": "/uploads/1780134610512.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T09:50:10.518Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T09:50:10.518Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab2eec888ba2bb572fa6e"
+    },
+    "name": "Bolu Jadul",
+    "description": "Bolu klasik rumahan dengan rasa autentik yang mengingatkan pada masa kecil.",
+    "price": 35000,
+    "stock": 15,
+    "category": "Bolu & Cake",
+    "image": "/uploads/1780134649348.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T09:50:38.649Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T09:50:49.357Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab32dc888ba2bb572fa77"
+    },
+    "name": "Bolu Ketan",
+    "description": "Bolu ketan hitam yang lembut, legit, dan kaya akan cita rasa tradisional.",
+    "price": 40000,
+    "stock": 4,
+    "category": "Bolu & Cake",
+    "image": "/uploads/1780134825811.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T09:51:41.229Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T09:53:45.824Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab3e9c888ba2bb572fa86"
+    },
+    "name": "Black Forest",
+    "description": "Cake cokelat premium dengan krim lembut dan topping ceri yang menarik.",
+    "price": 95000,
+    "stock": 2,
+    "category": "Bolu & Cake",
+    "image": "/uploads/1780134889348.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T09:54:49.353Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T09:54:49.353Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab434c888ba2bb572fa8b"
+    },
+    "name": "Paket Snack Box Hemat",
+    "description": "Berisi 2 jenis jajanan pasar dan 1 air mineral. Cocok untuk acara sederhana.",
+    "price": 15,
+    "stock": 100,
+    "category": "Paket",
+    "image": "/uploads/1780134964662.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T09:56:04.681Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T09:56:04.681Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab467c888ba2bb572fa90"
+    },
+    "name": "Paket Snack Box Standar",
+    "description": "Berisi 3 jenis jajanan pasar dan 1 air mineral. Pilihan favorit untuk rapat dan pengajian.",
+    "price": 20000,
+    "stock": 100,
+    "category": "Paket",
+    "image": "/uploads/1780135015829.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T09:56:55.835Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T09:56:55.835Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab4b4c888ba2bb572fa95"
+    },
+    "name": "Paket Snack Box Premium",
+    "description": "Berisi 4 jenis jajanan pasar premium dan minuman kemasan.",
+    "price": 30000,
+    "stock": 50,
+    "category": "Paket",
+    "image": "/uploads/1780135092974.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T09:58:12.987Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T09:58:12.987Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab4f0c888ba2bb572fa9a"
+    },
+    "name": "Paket Seserahan Basic",
+    "description": "Paket seserahan dengan dekorasi sederhana namun tetap elegan",
+    "price": 250000,
+    "stock": 5,
+    "category": "Paket",
+    "image": "/uploads/1780135152899.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T09:59:12.908Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T09:59:12.908Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab527c888ba2bb572fa9f"
+    },
+    "name": "Paket Seserahan Premium",
+    "description": "Paket seserahan eksklusif dengan dekorasi cantik dan isi yang lebih lengkap.",
+    "price": 500000,
+    "stock": 2,
+    "category": "Paket",
+    "image": "/uploads/1780135207851.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T10:00:07.854Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T10:00:07.854Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab559c888ba2bb572faa4"
+    },
+    "name": "Kembang Goyang",
+    "description": "Kue tradisional berbentuk bunga dengan tekstur renyah dan rasa manis gurih.",
+    "price": 15000,
+    "stock": 20,
+    "category": "Camilan",
+    "image": "/uploads/1780135257518.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T10:00:57.522Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T10:00:57.522Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab576c888ba2bb572faa8"
+    },
+    "name": "Rempeyek Kacang",
+    "description": "Rempeyek renyah dengan taburan kacang melimpah dan cita rasa gurih.",
+    "price": 18000,
+    "stock": 20,
+    "category": "Camilan",
+    "image": "/uploads/1780135286736.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T10:01:26.741Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T10:01:26.741Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a1ab5c5c888ba2bb572faae"
+    },
+    "name": "Mix Platter Kue Pasar",
+    "description": "Tampah ukuran sedang berisikan berbagai macam jajanan tradisional cocok untuk acara keluarga, arisan, dan lainnya.",
+    "price": 200000,
+    "stock": 2,
+    "category": "Paket",
+    "image": "/uploads/1780135365361.jpg",
+    "avgRating": 0,
+    "reviewCount": 0,
+    "createdAt": {
+      "$date": "2026-05-30T10:02:45.366Z"
+    },
+    "updatedAt": {
+      "$date": "2026-05-30T10:02:45.366Z"
+    },
+    "__v": 0
+  }
+]
