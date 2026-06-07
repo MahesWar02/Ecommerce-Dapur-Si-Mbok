@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import * as orderService from "../../services/orderService";
 import { cancelOrder } from "../../services/orderService";
 import Navbar from "../../components/shared/Navbar";
+import Footer from "../../components/shared/Footer";
 
 const statusSteps = ["pending", "paid", "processing", "shipped", "delivered"];
 
@@ -364,6 +365,7 @@ const OrderDetailPage = () => {
           )}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

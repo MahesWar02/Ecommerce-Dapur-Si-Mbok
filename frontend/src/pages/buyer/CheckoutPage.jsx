@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import * as orderService from "../../services/orderService";
 import Navbar from "../../components/shared/Navbar";
 import * as authService from "../../services/authService";
+import Footer from "../../components/shared/Footer";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -439,6 +440,7 @@ const CheckoutPage = () => {
           </>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

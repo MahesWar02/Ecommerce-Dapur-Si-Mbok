@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { updateUserProfile } from "../../store/slices/authSlice";
 import * as authService from "../../services/authService";
 import Navbar from "../../components/shared/Navbar";
+import Footer from "../../components/shared/Footer";
 
 const LABELS = ["Rumah", "Kantor", "Lainnya"];
 
@@ -694,6 +695,7 @@ const ProfilePage = () => {
             </form>
           </div>
         </div>
+        <Footer />
       </div>
     );
   }

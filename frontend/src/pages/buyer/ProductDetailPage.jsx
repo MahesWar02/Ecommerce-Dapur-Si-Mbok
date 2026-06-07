@@ -9,6 +9,7 @@ import {
 import { addItemToCart } from "../../store/slices/cartSlice";
 import Navbar from "../../components/shared/Navbar";
 import * as reviewService from "../../services/reviewService";
+import Footer from "../../components/shared/Footer";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -370,6 +371,7 @@ const ProductDetailPage = () => {
           )}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

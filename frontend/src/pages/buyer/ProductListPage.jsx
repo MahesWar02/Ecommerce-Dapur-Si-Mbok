@@ -6,6 +6,7 @@ import { addItemToCart } from "../../store/slices/cartSlice";
 import ProductCard from "../../components/buyer/ProductCard";
 import Navbar from "../../components/shared/Navbar";
 import { CATEGORIES } from "../../utils/constants";
+import Footer from "../../components/shared/Footer";
 
 const ALL_CATEGORIES = ["Semua", ...CATEGORIES];
 
@@ -113,6 +114,7 @@ const ProductListPage = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

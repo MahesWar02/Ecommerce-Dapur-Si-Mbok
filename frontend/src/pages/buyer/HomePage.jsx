@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Navbar from "../../components/shared/Navbar";
+import Footer from "../../components/shared/Footer";
 
 const HomePage = () => {
   return (
@@ -78,15 +79,7 @@ const HomePage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-100 py-8 px-4 text-center">
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <span className="text-2xl">🍳</span>
-          <span className="font-bold text-gray-800">Dapur Si Mbok</span>
-        </div>
-        <p className="text-sm text-gray-400">
-          © 2024 Dapur Si Mbok. Semua hak dilindungi.
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 };

@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import * as orderService from "../../services/orderService";
 import * as reviewService from "../../services/reviewService";
 import Navbar from "../../components/shared/Navbar";
+import Footer from "../../components/shared/Footer";
 
 const StarInput = ({ value, onChange }) => (
   <div className="flex gap-1">
@@ -268,6 +269,7 @@ const ReviewPage = () => {
           })}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as orderService from "../../services/orderService";
 import Navbar from "../../components/shared/Navbar";
+import Footer from "../../components/shared/Footer";
 
 const PaymentPage = () => {
   const { id } = useParams();
@@ -184,6 +185,7 @@ const PaymentPage = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

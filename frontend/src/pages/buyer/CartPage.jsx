@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCart } from "../../store/slices/cartSlice";
 import CartItem from "../../components/buyer/CartItem";
 import Navbar from "../../components/shared/Navbar";
+import Footer from "../../components/shared/Footer";
 
 const CartPage = () => {
   const dispatch = useDispatch();
@@ -28,7 +29,7 @@ const CartPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 ">
       <Navbar />
 
       <div className="max-w-4xl mx-auto px-4 py-8">
@@ -105,6 +106,7 @@ const CartPage = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

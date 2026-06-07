@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as orderService from "../../services/orderService";
 import Navbar from "../../components/shared/Navbar";
+import Footer from "../../components/shared/Footer";
 
 const statusConfig = {
   pending: {
@@ -160,6 +161,7 @@ const MyOrdersPage = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };
