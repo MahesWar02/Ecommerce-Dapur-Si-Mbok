@@ -20,7 +20,12 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
       const path = window.location.pathname;
-      if (path !== "/login" && path !== "/register") {
+      if (
+        path !== "/login" &&
+        path !== "/register" &&
+        path !== "/forgot-password" &&
+        !path.startsWith("/reset-password")
+      ) {
         window.location.href = "/login";
       }
     }
