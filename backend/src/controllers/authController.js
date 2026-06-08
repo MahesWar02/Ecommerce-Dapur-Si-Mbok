@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import crypto from "crypto";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
 // Generate JWT token
 const generateToken = (id) => {
@@ -166,37 +166,26 @@ export const forgotPassword = async (req, res) => {
     // Kirim email
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${token}`;
 
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
-    await transporter.sendMail({
-      from: `"Dapur Si Mbok" <${process.env.EMAIL_USER}>`,
+    await resend.emails.send({
+      from: "Dapur Si Mbok <onboarding@resend.dev>",
       to: user.email,
       subject: "Reset Kata Sandi - Dapur Si Mbok",
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 480px; margin: auto;">
-          <h2 style="color: #f97316;">Dapur Si Mbok</h2>
-          <p>Halo <strong>${user.name}</strong>,</p>
-          <p>Kami menerima permintaan reset kata sandi untuk akun Anda.</p>
-          <p>Klik tombol berikut untuk membuat kata sandi baru:</p>
-          <a href="${resetUrl}"
-            style="display:inline-block;background:#f97316;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;margin:16px 0;">
-            Reset Kata Sandi
-          </a>
-          <p style="color:#888;font-size:13px;">Link ini hanya berlaku selama <strong>1 jam</strong>.</p>
-          <p style="color:#888;font-size:13px;">Jika Anda tidak meminta reset kata sandi, abaikan email ini.</p>
-        </div>
-      `,
+    <div style="font-family: Arial, sans-serif; max-width: 480px; margin: auto;">
+      <h2 style="color: #f97316;">Dapur Si Mbok</h2>
+      <p>Halo <strong>${user.name}</strong>,</p>
+      <p>Kami menerima permintaan reset kata sandi untuk akun Anda.</p>
+      <p>Klik tombol berikut untuk membuat kata sandi baru:</p>
+      <a href="${resetUrl}"
+        style="display:inline-block;background:#f97316;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;margin:16px 0;">
+        Reset Kata Sandi
+      </a>
+      <p style="color:#888;font-size:13px;">Link ini hanya berlaku selama <strong>1 jam</strong>.</p>
+      <p style="color:#888;font-size:13px;">Jika Anda tidak meminta reset kata sandi, abaikan email ini.</p>
+    </div>
+  `,
     });
 
     res.json({ message: "Jika email terdaftar, link reset akan dikirim" });
